@@ -1,0 +1,42 @@
+---
+- hosts: all
+  gather_facts: yes
+  tasks:
+    - name: Ensuring EPEL is installed.
+      yum:
+        name: epel-release
+        state: present
+
+    - name: Ensuring yum utils is installed.
+      yum:
+        name: yum-utils
+        state: present
+
+    - name: Ensuring hashicorp repo is added.
+      shell: yum-config-manager --add-repo https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo
+
+    - name: Ensuring terraform is installed.
+      yum:
+        name: terraform
+        state: present
+    # Installing pre-requistes
+    - name: Installing azure python
+      pip:
+        name: ansible[azure]
+# Creating a file.
+    - name: Creating root directory
+      file:
+        path: /root/.azure
+        state: directory
+        mode: u+rwx,g+rwx,o+rx
+
+    - name: Create azure profile
+      file:
+        path: /root/.azure/azureProfile.json
+        state: touch
+        mode: u+rw,g+rw,o+r
+
+    # tasks file for jenkins
+    - name: Installing boto.
+      pip:
+        name: boto
